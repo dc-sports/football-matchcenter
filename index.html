@@ -131,6 +131,9 @@ section.sec{margin-top:36px;scroll-margin-top:150px}
 .fbar{padding:8px 0 8px;gap:6px}.lg{padding:6px 11px;font-size:13px}.tg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.tg::-webkit-scrollbar{display:none}.tg .sp{display:none}.tgb,.copy,.theme{flex:none;font-size:12.5px;padding:4px 10px}.hero .mandu{display:none}}
 .empty{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:28px;text-align:center;color:var(--sub);display:flex;align-items:center;justify-content:center;gap:12px}
 .empty img{width:56px}
+.nextwk{margin-top:4px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+.nextwk b{font-size:15px}
+.nextwk span{font-size:13.5px;color:var(--sub);word-break:keep-all}
 
 .route{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:18px}
 .rstep{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
@@ -206,7 +209,7 @@ footer a{text-decoration:underline}
    <button class="tgb" id="fKor" aria-pressed="false" type="button">한국 선수 경기만</button>
    <button class="tgb big" id="fBig" aria-pressed="false" type="button">빅매치만</button>
    <span class="sp"></span>
-   <button class="copy" id="copy" type="button">갤러리 공지용 텍스트</button>
+   <button class="copy" id="copy" type="button" hidden>갤러리 공지용 텍스트</button>
    <button class="theme" id="theme" type="button">다크 모드</button>
   </div>
  </div>
@@ -215,6 +218,8 @@ footer a{text-decoration:underline}
   <div class="sh"><div><div class="eyebrow">FIXTURES</div><h2 id="schTitle">경기 일정</h2></div><p>시간은 모두 한국시간 · 빨간 줄은 한국 선수 소속팀 경기 · 경기 상태는 킥오프 시각 기준 자동 표시</p></div>
   <div id="days"></div>
  </section>
+
+ <div class="nextwk"><b>다음 주 가이드도 이 주소에서</b><span>12/4(금)부터 이어지는 다음 주말 경기 일정과 프리뷰도 주말 전에 같은 주소로 업데이트돼요. 즐겨찾기 해두세요.</span></div>
 
  <section class="sec" id="korean">
   <div class="sh"><div><div class="eyebrow" style="color:var(--kor)">KOREAN PLAYERS</div><h2>코리안리거 관람 동선</h2></div><p>시간순 정리 · 출전 여부는 킥오프 약 1시간 전 라인업 발표로 확인</p></div>
@@ -457,7 +462,7 @@ function renderTable(){
 function sync(noHash){
  $('#fKor').setAttribute('aria-pressed',F.kor);$('#fBig').setAttribute('aria-pressed',F.big);
  renderLgs();renderDays();
- if(!noHash){const h=F.lg==='all'?'':F.lg;if(('#'+h)!==location.hash&&!(h===''&&!location.hash)){try{history.replaceState(null,'',h?'#'+h:location.pathname+location.search)}catch(e){}}}
+ if(!noHash&&!OPS){const h=F.lg==='all'?'':F.lg;if(('#'+h)!==location.hash&&!(h===''&&!location.hash)){try{history.replaceState(null,'',h?'#'+h:location.pathname+location.search)}catch(e){}}}
 }
 $('#fKor').onclick=()=>{F.kor=!F.kor;sync()};
 $('#fBig').onclick=()=>{F.big=!F.big;sync()};
@@ -488,7 +493,7 @@ function setThemeBtn(){$('#theme').textContent=curDark()?'라이트 모드':'다
 $('#theme').onclick=()=>{root.setAttribute('data-theme',curDark()?'light':'dark');setThemeBtn()};
 setThemeBtn();
 
-function fromHash(){const h=location.hash.slice(1);if(LG[h]){F.lg=h;sync(true);return true}return false}
+let OPS=false;function fromHash(){const h=location.hash.slice(1);if(h==='ops'){OPS=true;$('#copy').hidden=false;return false}if(LG[h]){F.lg=h;sync(true);return true}return false}
 window.addEventListener('hashchange',fromHash);
 renderHero();renderKorean();renderTable();
 if(!fromHash())sync(true);
