@@ -191,7 +191,7 @@ footer a{text-decoration:underline}
 <main id="top" class="wrap">
  <section class="hero">
   <div>
-   <span class="lbl"><i></i>한국시간(KST) 기준 · 11/28(토) – 12/1(화)</span>
+   <span class="lbl"><i></i>한국시간(KST) 기준 · <span id="wkRange"></span></span>
    <h1>주간 <em>해축 가이드</em></h1>
    <p>5대 리그 전 경기와 <b>한국 선수 소속팀 경기</b>를 한 화면에. 경기를 누르면 관람 포인트와 최근 맞대결이 열려요.</p>
    <div class="hchips" id="hchips"></div>
@@ -219,7 +219,7 @@ footer a{text-decoration:underline}
   <div id="days"></div>
  </section>
 
- <div class="nextwk"><b>다음 주 가이드도 이 주소에서</b><span>12/4(금)부터 이어지는 다음 주말 경기 일정과 프리뷰도 주말 전에 같은 주소로 업데이트돼요. 즐겨찾기 해두세요.</span></div>
+ <div class="nextwk"><b>다음 주 가이드도 이 주소에서</b><span><span id="wkNext"></span>부터 이어지는 다음 주말 경기 일정과 프리뷰도 주말 전에 같은 주소로 업데이트돼요. 즐겨찾기 해두세요.</span></div>
 
  <section class="sec" id="korean">
   <div class="sh"><div><div class="eyebrow" style="color:var(--kor)">KOREAN PLAYERS</div><h2>코리안리거 관람 동선</h2></div><p>시간순 정리 · 출전 여부는 킥오프 약 1시간 전 라인업 발표로 확인</p></div>
@@ -236,7 +236,7 @@ footer a{text-decoration:underline}
 </main>
 
 <footer><div class="wrap fl">
- <div><b>주간 해축 가이드</b> · 비공식 정리본입니다. 일정은 방송 편성에 따라 바뀔 수 있으니 킥오프 전 공식 채널을 확인해 주세요.<br>정리 기준: 2026년 11월 27일(금) 저녁, 한국시간</div>
+ <div><b>주간 해축 가이드</b> · 비공식 정리본입니다. 일정은 방송 편성에 따라 바뀔 수 있으니 킥오프 전 공식 채널을 확인해 주세요.<br>정리 기준: <span id="wkAsof"></span></div>
  <div>일정: <a href="https://www.premierleague.com/en/news/4725574/fixture-amendments-for-premier-league-matches-in-november">Premier League</a> · <a href="https://www.espn.com/soccer/schedule/_/league/ger.1">ESPN</a> · <a href="https://www.livesoccertv.com/schedules/2026-11-29/">LiveSoccerTV</a><br>순위: ESPN standings · 코리안리거·프리뷰: 국내 언론 보도(OSEN·뉴시스·뉴스핌·스포츠경향 등)</div>
 </div></footer>
 
@@ -263,6 +263,11 @@ const LG={
  etc:{n:'그 외 (한국 선수)',s:'그 외',c:'var(--etc)'}
 };
 const DOW=['일','월','화','수','목','금','토'];
+
+/*WEEKLY-DATA-START*/
+const WEEK={year:2026,range:'11/28(토) – 12/1(화)',next:'12/4(금)',asof:'2026년 11월 27일(금) 저녁, 한국시간',
+ must:[['아스널','선두 결정전'],['에버턴','머지사이드 더비'],['마인츠','코리안 더비'],['LAFC','손흥민 벼랑 끝']]};
+const fd=d=>d.length>5?d:WEEK.year+'-'+d;
 
 /* 경기 데이터: d=KST 날짜, t=KST 시각, hr/ar=현재 순위, kor=한국 선수, big=빅매치 표시 */
 const M=[
@@ -358,12 +363,13 @@ bl:{z:[4,16],rows:[['도르트문트',10,7,3,0,10,24],['바이에른 뮌헨',10,
 l1:{z:[3,16],rows:[['파리 생제르맹',11,8,2,1,13,26],['파리 FC',11,7,2,2,11,23],['릴',11,6,3,2,6,21],['리옹',11,6,2,3,7,20],['마르세유',11,6,0,5,7,18],['브레스트',11,5,3,3,7,18],['니스',11,5,2,4,2,17],['모나코',11,4,5,2,2,17],['렌',11,5,2,4,0,17],['로리앙',11,4,4,3,1,16],['랑스',11,4,2,5,2,14],['툴루즈',11,3,5,3,1,14],['르망',11,2,5,4,-6,11],['트루아',11,3,2,6,-8,11],['오세르',11,3,2,6,-11,11],['스트라스부르',11,3,1,7,-5,10],['앙제',11,2,2,7,-14,8],['르아브르',11,0,2,9,-15,2]]}
 };
 const KORTEAM={'바이에른 뮌헨':'김민재','마인츠':'이재성','우니온 베를린':'정우영','샬케 04':'황희찬','아우크스부르크':'설영우','묀헨글라트바흐':'카스트로프','아틀레티코 마드리드':'이강인','브렌트퍼드':'김지수'};
+/*WEEKLY-DATA-END*/
 
 const $=s=>document.querySelector(s);
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-M.forEach((m,i)=>{m.id='m'+i;m.ko=new Date('2026-'+m.d+'T'+m.t+':00+09:00')});
-const dlabel=d=>{const x=new Date('2026-'+d+'T12:00:00+09:00');return (x.getMonth()+1)+'/'+x.getDate()+'('+DOW[x.getDay()]+')'};
+M.forEach((m,i)=>{m.id='m'+i;m.ko=new Date(fd(m.d)+'T'+m.t+':00+09:00')});
+const dlabel=d=>{const x=new Date(fd(d)+'T12:00:00+09:00');return (x.getMonth()+1)+'/'+x.getDate()+'('+DOW[x.getDay()]+')'};
 const ampm=t=>{const h=+t.slice(0,2);return h<7?'새벽':h<12?'오전':h<18?'오후':'밤'};
 function state(m){const now=Date.now(),k=m.ko.getTime();if(now<k)return['pre','경기 전'];if(now<k+115*60000)return['live','진행 중'];return['end','종료']}
 function teamTxt(name,r){return '<b>'+esc(name)+'</b>'+(r?'<span class="rk">'+r+'위</span>':'')}
@@ -425,7 +431,7 @@ function renderHero(){
  const kor=M.filter(m=>m.kor),big=M.filter(m=>m.big);
  const names=new Set();kor.forEach(m=>m.kor.forEach(k=>names.add(k.split('(')[0])));
  $('#hchips').innerHTML='<span>전체 <b>'+M.length+'</b>경기</span><span>코리안리거 <b>'+names.size+'</b>명 · <b>'+kor.length+'</b>경기</span><span>빅매치 <b>'+big.length+'</b>경기</span>';
- const pick=[['아스널','선두 결정전'],['에버턴','머지사이드 더비'],['마인츠','코리안 더비'],['LAFC','손흥민 벼랑 끝']];
+ const pick=WEEK.must;
  const g=$('#must');g.innerHTML='';
  pick.forEach(([h,lab])=>{const m=M.find(x=>x.h===h);
   const b=el('button','mcard','<small>'+lab+' · '+dlabel(m.d)+' '+m.t+'</small><b>'+esc(m.h)+' vs '+esc(m.a)+'</b><span>'+(m.kor?esc(m.kor.join(' · ')):LG[m.lg].n)+'</span>');
@@ -470,7 +476,7 @@ $('#fBig').onclick=()=>{F.big=!F.big;sync()};
 /* 공지용 텍스트 */
 function noticeText(){
  const list=filtered().slice().sort((a,b)=>a.ko-b.ko);
- const L=[];L.push('[해외축구 주말 경기 일정] 11/28(토) ~ 12/1(화) · 한국시간 기준');
+ const L=[];L.push('[주간 해축 가이드] '+WEEK.range+' · 한국시간 기준');
  L.push(F.lg==='all'?'':'리그: '+LG[F.lg].n);
  L.push('★ = 한국 선수 소속팀 경기');L.push('');
  let cur='';
@@ -495,6 +501,7 @@ setThemeBtn();
 
 let OPS=false;function fromHash(){const h=location.hash.slice(1);if(h==='ops'){OPS=true;$('#copy').hidden=false;return false}if(LG[h]){F.lg=h;sync(true);return true}return false}
 window.addEventListener('hashchange',fromHash);
+$('#wkRange').textContent=WEEK.range;$('#wkNext').textContent=WEEK.next;$('#wkAsof').textContent=WEEK.asof;
 renderHero();renderKorean();renderTable();
 if(!fromHash())sync(true);
 setInterval(renderDays,60000);
