@@ -171,9 +171,35 @@ td .nx{font-size:11px;color:var(--sub);font-weight:700;margin-left:4px}
  th.g,td.g{display:none}
 }
 @media (max-width:330px){th.d,td.d,th.l,td.l{display:none}}
+/* 갤러리 밖 차단 화면 */
+.gate{display:none;height:100%;min-height:300px;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.blocked .app{display:none}
+.blocked .gate{display:flex}
+.gate .in{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 22px;max-width:420px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.gate img{width:64px;height:64px}
+.gate b{font-size:17px;letter-spacing:-.3px;word-break:keep-all}
+.gate p{font-size:13.5px;color:var(--sub);word-break:keep-all}
+.gate a{margin-top:8px;display:inline-block;background:var(--navy);color:#fff;text-decoration:none;font-weight:800;font-size:14px;padding:9px 18px;border-radius:999px}
 </style>
+<script>
+/* 디시인사이드 게시글 iframe 안에서만 표시. 그 외(주소 직접 접속, 다른 사이트 iframe)는 갤러리 안내 화면 */
+(function(){
+ var OK=/(^|\.)dcinside\.com$/i;
+ function host(u){try{return new URL(u).hostname}catch(e){return ''}}
+ var local=location.protocol==='file:'||/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+ var ok=false;
+ if(local)ok=true;
+ else{var framed=false;try{framed=window.top!==window.self}catch(e){framed=true}
+  if(framed){var ao=location.ancestorOrigins;
+   if(ao&&ao.length){ok=true;for(var i=0;i<ao.length;i++){if(!OK.test(host(ao[i])))ok=false}}
+   else ok=OK.test(host(document.referrer))}}
+ window.__DC_OK=ok;window.__DC_LOCAL=local;
+ if(!ok)document.documentElement.classList.add('blocked');
+})();
+</script>
 </head>
 <body>
+<div class="gate"><div class="in"><img class="mimg" alt=""><b>이 정보는 디시인사이드 갤러리에서만 볼 수 있어요</b><p>주간 해축 가이드는 매주 해외축구 갤러리 게시물로 올라와요.</p><a id="gateLink" href="https://gall.dcinside.com/football_new9" target="_blank" rel="noopener">갤러리에서 보기</a></div></div>
 <div class="app">
  <div class="top">
   <div class="t1">
@@ -321,7 +347,7 @@ function state(m){const now=Date.now(),k=m.ko.getTime();if(now<k)return['pre','�
 const pname=k=>k.split('(')[0];
 const CHEV='<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>';
 const panel=$('#panel');
-const OPS=/[?&]ops\b/.test(location.search);
+const OPS=window.__DC_LOCAL&&/[?&]ops\b/.test(location.search);
 
 /* 프레임 안에서만 스크롤 (scrollIntoView는 바깥 게시글까지 움직이므로 쓰지 않음) */
 function scrollToEl(node){if(!node)return;const sb=panel.querySelector('.subbar');const off=(sb?sb.offsetHeight:0)+40;
@@ -500,8 +526,10 @@ function show(v){
 }
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(t.dataset.v));
 
+if(window.__DC_OK){
 renderTop();show('hot');
 setInterval(()=>{renderNext();if(view!=='tbl'){const k=panel.scrollTop;panel.innerHTML='';panel.append(VIEWS[view]());panel.scrollTop=k}},60000);
+}
 </script>
 </body>
 </html>
